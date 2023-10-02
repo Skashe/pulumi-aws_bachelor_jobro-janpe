@@ -1,0 +1,8 @@
+encryptionsalt: v1:6HXaaORv+Xo=:v1:t+IoIJDzbadGMFA9:yCKvslz+8qWbntz0fTvgk+GMCqN3Wg==
+config:
+  aws:region: eu-central-1
+  awsEKS:desiredClusterSize: "3"
+  awsEKS:eksNodeInstanceType: t3.medium
+  awsEKS:maxClusterSize: "6"
+  awsEKS:minClusterSize: "3"
+  awsEKS:vpcNetworkCidr: 10.0.0.0/16

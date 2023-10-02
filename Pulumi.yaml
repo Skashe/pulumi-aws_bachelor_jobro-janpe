@@ -1,0 +1,6 @@
+name: awsEKS
+runtime:
+  name: python
+  options:
+    virtualenv: venv
+description: Bachelor project AWS JOHAN_JAN
