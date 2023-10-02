@@ -1,0 +1,1 @@
+# pulumi-aws_bachelor_jobro-janpe
