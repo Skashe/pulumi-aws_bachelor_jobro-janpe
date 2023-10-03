@@ -5,10 +5,10 @@ import pulumi_kubernetes as kubernetes
 
 # Get some values from the Pulumi configuration (or use defaults)
 config = pulumi.Config()
-min_cluster_size = config.get_float("minClusterSize", 3)
-max_cluster_size = config.get_float("maxClusterSize", 6)
-desired_cluster_size = config.get_float("desiredClusterSize", 3)
-eks_node_instance_type = config.get("eksNodeInstanceType", "t3.medium")
+min_cluster_size = config.get_float("minClusterSize", 1)
+max_cluster_size = config.get_float("maxClusterSize", 3)
+desired_cluster_size = config.get_float("desiredClusterSize", 2)
+eks_node_instance_type = config.get("eksNodeInstanceType", "t3.small")
 vpc_network_cidr = config.get("vpcNetworkCidr", "10.0.0.0/16")
 
 # Create a VPC for the EKS cluster
