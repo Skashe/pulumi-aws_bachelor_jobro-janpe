@@ -1,0 +1,27 @@
+# dev namespace
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: dev
+
+# hello world deployment in the dev namespace
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-world
+  namespace: dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hello-world
+  template:
+    metadata:
+      labels:
+        app: hello-world
+    spec:
+      containers:
+      - name: hello-world
+        image: nginx:latest
+        ports:
+        - containerPort: 80
