@@ -6,3 +6,5 @@ config:
   awsEKS:maxClusterSize: "6"
   awsEKS:minClusterSize: "3"
   awsEKS:vpcNetworkCidr: 10.0.0.0/16
+  kubernetes:
+    context: docker-desktop

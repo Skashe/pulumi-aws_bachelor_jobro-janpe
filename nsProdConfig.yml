@@ -3,7 +3,7 @@ apiVersion: v1
 kind: Namespace
 metadata:
   name: prod
-
+---
 # hello world deployment in the production namespace
 apiVersion: apps/v1
 kind: Deployment

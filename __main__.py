@@ -12,25 +12,6 @@ desired_cluster_size = config.get_float("desiredClusterSize", 2)
 eks_node_instance_type = config.get("eksNodeInstanceType", "t3.small")
 vpc_network_cidr = config.get("vpcNetworkCidr", "10.0.0.0/16")
 
-# Create a namespace configuration file to load in namespaces.YAML
-# Creates namespaces based on configration files from NS___Config files
-ns_dev_config = ConfigFile("ns_dev_config", file="nsDevConfig.yaml")
-ns_alpha_config = ConfigFile("ns_alpha_config", file="nsAlphaConfig.yml")
-ns_prod_config = ConfigFile("ns_prod_config", file="nsProdConfig.yml")
-
-devNS = pulumi.Output.from_input(ns_dev_config.get_resource(
-		"apps/v1/Deployment",
-		"hello-world", namespace="dev"
-))
-alphaNS = pulumi.Output.from_input(ns_alpha_config.get_resource(
-		"apps/v1/Deployment",
-		"hello-world", namespace="alpha"
-))
-prodNS = pulumi.Output.from_input(ns_prod_config.get_resource(
-		"apps/v1/Deployment",
-		"hello-world", namespace="prod"
-))
-
 # Create a VPC for the EKS cluster
 eks_vpc = awsx.ec2.Vpc(
 		"eks-vpc",
@@ -122,8 +103,25 @@ pulumi.export(
 		"url",
 		test_nginx_service.status.load_balancer.ingress[0].hostname
 )
-# Exports kubernetes namespace resources
-pulumi.export("dev", devNS)
-pulumi.export("alpha", alphaNS)
-pulumi.export("prod", prodNS)
 
+# Create a namespace configuration file to load in namespaces.YAML
+# Creates namespaces based on configration files from NS___Config files
+ns_dev_config = ConfigFile("ns_dev_config", file="nsDevConfig.yaml",
+													 opts=pulumi.ResourceOptions(provider=eks_provider))
+ns_alpha_config = ConfigFile("ns_alpha_config", file="nsAlphaConfig.yml",
+														 opts=pulumi.ResourceOptions(provider=eks_provider))
+ns_prod_config = ConfigFile("ns_prod_config", file="nsProdConfig.yml",
+														opts=pulumi.ResourceOptions(provider=eks_provider))
+
+devNS = pulumi.Output.from_input(ns_dev_config.get_resource(
+		"apps/v1/Deployment",
+		"hello-world", namespace="dev"
+))
+alphaNS = pulumi.Output.from_input(ns_alpha_config.get_resource(
+		"apps/v1/Deployment",
+		"hello-world", namespace="alpha"
+))
+prodNS = pulumi.Output.from_input(ns_prod_config.get_resource(
+		"apps/v1/Deployment",
+		"hello-world", namespace="prod"
+))
