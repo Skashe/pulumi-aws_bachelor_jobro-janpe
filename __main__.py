@@ -104,24 +104,21 @@ pulumi.export(
 		test_nginx_service.status.load_balancer.ingress[0].hostname
 )
 
-# Create a namespace configuration file to load in namespaces.YAML
-# Creates namespaces based on configration files from NS___Config files
-ns_dev_config = ConfigFile("ns_dev_config", file="nsDevConfig.yaml",
+# Loads in and creates a configuration file based on nameSpaceConfig.yaml
+ns_config = ConfigFile("namespace config", file="nameSpaceConfig.yaml",
 													 opts=pulumi.ResourceOptions(provider=eks_provider))
-ns_alpha_config = ConfigFile("ns_alpha_config", file="nsAlphaConfig.yml",
-														 opts=pulumi.ResourceOptions(provider=eks_provider))
-ns_prod_config = ConfigFile("ns_prod_config", file="nsProdConfig.yml",
-														opts=pulumi.ResourceOptions(provider=eks_provider))
-
-devNS = pulumi.Output.from_input(ns_dev_config.get_resource(
+# Creates name spaced 'dev' as well as the deployment hello-world
+devNS = pulumi.Output.from_input(ns_config.get_resource(
 		"apps/v1/Deployment",
 		"hello-world", namespace="dev"
 ))
-alphaNS = pulumi.Output.from_input(ns_alpha_config.get_resource(
+# Creates name spaced 'alpha' as well as the deployment hello-world
+alphaNS = pulumi.Output.from_input(ns_config.get_resource(
 		"apps/v1/Deployment",
 		"hello-world", namespace="alpha"
 ))
-prodNS = pulumi.Output.from_input(ns_prod_config.get_resource(
+# Creates name spaced 'dev' as well as the deployment hello-world
+prodNS = pulumi.Output.from_input(ns_config.get_resource(
 		"apps/v1/Deployment",
 		"hello-world", namespace="prod"
 ))
