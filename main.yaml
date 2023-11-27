@@ -1,0 +1,7 @@
+provider:
+  kubernetes:
+    kubeconfig: ${eks_cluster.kubeconfig_json}
+
+resources:
+- kind: ConfigFile
+  path: hello-world.yaml
