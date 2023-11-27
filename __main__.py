@@ -1,6 +1,12 @@
 import pulumi
+
+# Not really sure what the difference is between the next two,
+# but some methods does not exist on the other and vice versa.
 import pulumi_awsx as awsx
+import pulumi_aws as aws
+
 import pulumi_eks as eks
+import pulumi_docker as docker
 import pulumi_kubernetes as kubernetes
 from pulumi_kubernetes.yaml import ConfigFile
 
@@ -43,6 +49,29 @@ eks_provider = kubernetes.Provider(
 		"eks-provider",
 		kubeconfig=eks_cluster.kubeconfig_json
 )
+
+# Create an AWS S3 bucket
+bucket = aws.s3.Bucket(
+	"bucket",
+	bucket="fancybucketnamejanjohan"
+)
+
+s3bucket = aws.s3.BucketCorsConfigurationV2(
+	"bucketCors",
+	bucket=bucket.id,
+	cors_rules=[
+        aws.s3.BucketCorsConfigurationV2CorsRuleArgs(
+            allowed_headers=["*"],
+            allowed_methods=[
+                "PUT",
+                "POST",
+            ],
+			allowed_origins=["*"],
+			max_age_seconds=3000,
+		)
+	]
+)
+
 
 test_nginx_deployment = kubernetes.apps.v1.Deployment(
 		"test-nginx-deployment",
@@ -96,6 +125,10 @@ test_nginx_service = kubernetes.core.v1.Service(
 		),
 		opts=pulumi.ResourceOptions(provider=eks_provider))
 
+# Loads in and creates a configuration file based on nameSpaceConfig.yaml
+ns_config = ConfigFile("namespace config", file="nameSpaceConfig.yaml",
+													 opts=pulumi.ResourceOptions(provider=eks_provider))
+
 # Export values to use elsewhere
 pulumi.export("kubeconfig", eks_cluster.kubeconfig)
 pulumi.export("vpcId", eks_vpc.vpc_id)
@@ -103,22 +136,3 @@ pulumi.export(
 		"url",
 		test_nginx_service.status.load_balancer.ingress[0].hostname
 )
-
-# Loads in and creates a configuration file based on nameSpaceConfig.yaml
-ns_config = ConfigFile("namespace config", file="nameSpaceConfig.yaml",
-													 opts=pulumi.ResourceOptions(provider=eks_provider))
-# Creates name spaced 'dev' as well as the deployment hello-world
-devNS = pulumi.Output.from_input(ns_config.get_resource(
-		"apps/v1/Deployment",
-		"hello-world", namespace="dev"
-))
-# Creates name spaced 'alpha' as well as the deployment hello-world
-alphaNS = pulumi.Output.from_input(ns_config.get_resource(
-		"apps/v1/Deployment",
-		"hello-world", namespace="alpha"
-))
-# Creates name spaced 'dev' as well as the deployment hello-world
-prodNS = pulumi.Output.from_input(ns_config.get_resource(
-		"apps/v1/Deployment",
-		"hello-world", namespace="prod"
-))
